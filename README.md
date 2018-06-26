@@ -68,8 +68,8 @@ Automated integration tests are using an embedded MongoDB and sample data (payme
 * [Maven](https://maven.apache.org/) - Dependency management
 * [Docker](https://www.docker.com) & [Docker Compose](https://www.docker.com) - Containerization & orchestration
 * [MongoDB](https://www.mongodb.com/) - Database
-- An API browser for the hal+json media type
-https://docs.spring.io/spring-data/rest/docs/current/reference/html/#_the_hal_browser
+* [Mongo Express](https://github.com/mongo-express/mongo-express) - Web-based MongoDB admin interface
+* [HAL browser](https://docs.spring.io/spring-data/rest/docs/current/reference/html/#_the_hal_browser) - An API browser for the hal+json media type
 
 
 ## Author
