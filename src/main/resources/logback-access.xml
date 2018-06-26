@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />
+
+    <appender name="accessfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.file.path}/application-access.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.file.path}/archived/application-access.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>combined</pattern>
+        </encoder>
+    </appender>
+
+    <appender-ref ref="accessfile"/>
+</configuration>

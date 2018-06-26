@@ -27,6 +27,8 @@ services:
       context: ./
       dockerfile: Dockerfile
     image: demo
+    environment:
+      - SPRING_ACTIVE_PROFILES=compose
     links:
     - mongodb:mongodb
     depends_on:

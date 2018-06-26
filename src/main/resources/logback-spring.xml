@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- To access application properties -->
+    <springProperty score="context" name="applicationName" source="spring.application.name"/>
+    <springProperty score="context" name="applicationProfile" source="spring.profiles.active"/>
+
+    <!-- To enable JUL bridging -->
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- To enable JMX Management -->
+    <jmxConfigurator/>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- @formatter:off -->
+            <pattern>
+                %-23(%d) %highlight(%-5level) %boldGreen([%15.15thread{15}]) %yellow(%36.36logger{36}) %msg%n
+            </pattern>
+            <!-- @formatter:on -->
+
+        </encoder>
+        <!-- deny all events if OFF or ALL, TRACE, DEBUG, WARN, ERROR, INFO  -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${CONSOLE_LOG_LEVEL:-INFO}</level>
+        </filter>
+    </appender>
+
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.file.path}/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${log.file.path}/archived/application.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 200MB -->
+                <maxFileSize>200MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- keep 60 files log history -->
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <!-- @formatter:off -->
+            <pattern>
+                %-23(%d) %-5level [%thread] %logger{15} %msg%n
+            </pattern>
+            <!-- @formatter:on -->
+        </encoder>
+    </appender>
+
+
+    <root level="INFO">
+        <appender-ref ref="console"/>
+        <appender-ref ref="file"/>
+    </root>
+</configuration>
