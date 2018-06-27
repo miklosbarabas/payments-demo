@@ -12,6 +12,7 @@ import org.miklosbarabas.demo.repositories.PaymentAttributesRepository;
 import org.miklosbarabas.demo.repositories.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class})
+@DirtiesContext
 public class PaymentRepositoryTest {
 
     @Autowired

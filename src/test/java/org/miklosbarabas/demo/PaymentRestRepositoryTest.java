@@ -15,6 +15,7 @@ import org.miklosbarabas.demo.repositories.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -28,7 +29,7 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = WebEnvironment.DEFINED_PORT)
-
+@DirtiesContext
 public class PaymentRestRepositoryTest {
     private static final String PAYMENTS_ENDPOINT = "http://localhost:8080/api/payments/";
 
