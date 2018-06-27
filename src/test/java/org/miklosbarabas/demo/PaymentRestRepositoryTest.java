@@ -77,7 +77,7 @@ public class PaymentRestRepositoryTest {
                 .when().get(PAYMENTS_ENDPOINT + testPayment.getId())
                 .then().statusCode(200).and().extract().as(Payment.class);
 
-        // Copying missing fields for paymentReturned as those are returned in the response
+        // Copying missing fields for paymentReturned as those are not returned in the response
         paymentReturned.setId(testPayment.getId());
         paymentReturned.getPaymentAttributes().setId(testPayment.getPaymentAttributes().getId());
         paymentReturned.setVersion(testPayment.getVersion());
@@ -93,7 +93,7 @@ public class PaymentRestRepositoryTest {
                 .when().post(PAYMENTS_ENDPOINT)
                 .then().extract().as(Payment.class);
 
-        // Copying missing fields for paymentReturned as those are returned in the response
+        // Copying missing fields for paymentReturned as those are not returned in the response
         paymentReturned.setId(testPayment.getId());
         paymentReturned.getPaymentAttributes().setId(testPayment.getPaymentAttributes().getId());
         paymentReturned.setVersion(testPayment.getVersion());
