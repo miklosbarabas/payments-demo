@@ -9,7 +9,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-Depending on how you want to build/run the application (methods below) you might need to have Docker & docker-compose installed (https://docs.docker.com/)
+Depending on how you want to build/run the application (methods below) you might need to have [docker](https://docs.docker.com/) & [docker-compose](https://docs.docker.com/compose/) installed 
 The application itself is using Java 8, so you need to have a JDK installed of that version to build/run without Docker.
 If you have chosen the Docker/Docker Compose method, you will <b>not</b> need to install anything as it is handled by Docker.
 

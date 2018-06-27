@@ -44,7 +44,7 @@ public class PaymentRepositoryTest {
     @Before
     public void initDb() throws IOException {
         clearDb();
-
+        // Load test data from JSON and save to DB
         try (InputStream inputStream = TypeReference.class.getResourceAsStream("/testdata/payments.json")) {
             TypeReference<List<Payment>> typeReference = new TypeReference<List<Payment>>(){};
             testPayments = objectMapper.readValue(inputStream, typeReference);
