@@ -1,11 +1,11 @@
 package org.miklosbarabas.demo.exceptions;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import org.springframework.data.rest.core.RepositoryConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -15,7 +15,6 @@ import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * REST response exception handlers
@@ -25,16 +24,16 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({RepositoryConstraintViolationException.class})
-    public ResponseEntity<Object> handleRepositoryConstraintViolationException(Exception ex) {
-        RepositoryConstraintViolationException constraintViolationException = (RepositoryConstraintViolationException) ex;
+    @ExceptionHandler({DataIntegrityViolationException.class})
+    public ResponseEntity<Object> handleRepositoryConstraintViolationException(DataIntegrityViolationException ex) {
+        Map<String, String> errors = new HashMap<>();
 
-        String errors = constraintViolationException
-                .getErrors()
-                .getAllErrors()
-                .stream()
-                .map(ObjectError::toString)
-                .collect(Collectors.joining("\n"));
+        if (ex instanceof DuplicateKeyException) {
+            errors.put("error", "entity with this id already exists");
+        }
+        else {
+            errors.put("error", "data integrity violation");
+        }
         return new ResponseEntity<>(errors, new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE);
     }
 

@@ -15,6 +15,7 @@ import org.miklosbarabas.demo.repositories.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -73,7 +74,7 @@ public class PaymentRestRepositoryTest {
     public void whenGetPayment_thenOKandPaymentsEquals() {
         Payment testPayment = testPayments.get(0);
 
-        Payment paymentReturned = given()
+        Payment paymentReturned = given().contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when().get(PAYMENTS_ENDPOINT + testPayment.getId())
                 .then().statusCode(200).and().extract().as(Payment.class);
 
@@ -89,9 +90,9 @@ public class PaymentRestRepositoryTest {
     public void whenSavePayment_thenOKandPaymentsEquals() {
         Payment testPayment = testPayments.get(5);
 
-        Payment paymentReturned = given().contentType("application/json").body(testPayment)
+        Payment paymentReturned = given().contentType(MediaType.APPLICATION_JSON_VALUE).body(testPayment)
                 .when().post(PAYMENTS_ENDPOINT)
-                .then().extract().as(Payment.class);
+                .then().statusCode(201).extract().as(Payment.class);
 
         // Copying missing fields for paymentReturned as those are not returned in the response
         paymentReturned.setId(testPayment.getId());
