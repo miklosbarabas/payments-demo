@@ -55,7 +55,7 @@ public class PaymentRestRepositoryTest {
             testPayments = objectMapper.readValue(inputStream, typeReference);
         }
 
-        // Save only the first testPaymentsToDatabase number of test entity to DB
+        // Save only the first NUMBER_OF_TESTPAYMENTS_TO_DB test entity to DB
         for (int i = 0; i < NUMBER_OF_TESTPAYMENTS_TO_DB; i++) {
             paymentRepository.save(testPayments.get(i));
         }
