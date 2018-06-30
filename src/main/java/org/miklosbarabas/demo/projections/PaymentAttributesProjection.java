@@ -15,6 +15,7 @@ public interface PaymentAttributesProjection {
     String getType();
     String getId();
     String getVersion();
+    String getOrganisationId();
     @JsonProperty("attributes")
     PaymentAttributes getPaymentAttributes();
 

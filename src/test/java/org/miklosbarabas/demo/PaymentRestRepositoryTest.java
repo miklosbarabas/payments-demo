@@ -22,10 +22,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 @RunWith(SpringRunner.class)
@@ -33,6 +36,8 @@ import static org.junit.Assert.assertEquals;
 @DirtiesContext
 public class PaymentRestRepositoryTest {
     private static final String PAYMENTS_ENDPOINT = "http://localhost:8080/api/payments/";
+    private static final int NUMBER_OF_TESTPAYMENTS_TO_DB = 3;
+    private ArrayList<Payment> testPayments;
 
     @Autowired
     private PaymentRepository paymentRepository;
@@ -40,7 +45,6 @@ public class PaymentRestRepositoryTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    private ArrayList<Payment> testPayments;
 
     @Before
     public void setup() throws IOException {
@@ -51,8 +55,10 @@ public class PaymentRestRepositoryTest {
             testPayments = objectMapper.readValue(inputStream, typeReference);
         }
 
-        // Save only the first test entity to DB
-        paymentRepository.save(testPayments.get(0));
+        // Save only the first testPaymentsToDatabase number of test entity to DB
+        for (int i = 0; i < NUMBER_OF_TESTPAYMENTS_TO_DB; i++) {
+            paymentRepository.save(testPayments.get(i));
+        }
 
         // Make Jackson not to fail on parsing the DTO because the response contains the _links attribute
         // because of the HATEAOS approach, but the DTO itself does not have that field.
@@ -87,8 +93,33 @@ public class PaymentRestRepositoryTest {
     }
 
     @Test
+    public void whenGetAllPayments_thenOKandPaymentsEquals() {
+        ArrayList<HashMap> paymentsReturned = given().contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().get(PAYMENTS_ENDPOINT)
+                .then().statusCode(200).and().extract().path("_embedded.data");
+
+        ArrayList<Payment> matchingPaymentsByIds = new ArrayList<>();
+        for (int i = 0; i < paymentsReturned.size(); i++) {
+            Payment paymentReturned = objectMapper.convertValue(paymentsReturned.get(i), Payment.class);
+            Optional<Payment> matchingPaymentByIds = testPayments.stream().
+                    filter(p -> p.getId().equals(paymentReturned.getId())).
+                    findFirst();
+
+            assertTrue(matchingPaymentByIds.isPresent());
+
+            // set ID because the projection does not contain the PaymentAttributes ID
+            paymentReturned.getPaymentAttributes().setId(matchingPaymentByIds.get().getPaymentAttributes().getId());
+            assertEquals(paymentReturned, matchingPaymentByIds.get());
+
+            matchingPaymentsByIds.add(matchingPaymentByIds.get());
+        }
+
+        assertEquals(NUMBER_OF_TESTPAYMENTS_TO_DB, matchingPaymentsByIds.size());
+    }
+
+    @Test
     public void whenSavePayment_thenOKandPaymentsEquals() {
-        Payment testPayment = testPayments.get(5);
+        Payment testPayment = testPayments.get(NUMBER_OF_TESTPAYMENTS_TO_DB + 1);
 
         Payment paymentReturned = given().contentType(MediaType.APPLICATION_JSON_VALUE).body(testPayment)
                 .when().post(PAYMENTS_ENDPOINT)
@@ -100,6 +131,40 @@ public class PaymentRestRepositoryTest {
         paymentReturned.setVersion(testPayment.getVersion());
 
         assertEquals(testPayment, paymentReturned);
+    }
+
+    @Test
+    public void whenDeletePayment_thenOKandGetPaymentNotFound() {
+        Payment testPayment = testPayments.get(0);
+
+        given().contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().delete(PAYMENTS_ENDPOINT + testPayment.getId())
+                .then().statusCode(204);
+
+        given().contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().get(PAYMENTS_ENDPOINT + testPayment.getId())
+                .then().statusCode(404);
+    }
+
+    @Test
+    public void whenUpdatePayment_thenOKandGetPaymentEquals() {
+        Payment testPayment = testPayments.get(0);
+        testPayment.getPaymentAttributes().setNumericReference("TESTNUMREF");
+
+        given().contentType(MediaType.APPLICATION_JSON_VALUE).body(testPayment)
+                .when().patch(PAYMENTS_ENDPOINT + testPayment.getId())
+                .then().statusCode(200);
+
+        Payment paymentUpdated = given().contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().get(PAYMENTS_ENDPOINT + testPayment.getId())
+                .then().statusCode(200).extract().as(Payment.class);
+
+        // Copying missing fields for paymentUpdated as those are not returned in the response
+        paymentUpdated.setId(testPayment.getId());
+        paymentUpdated.getPaymentAttributes().setId(testPayment.getPaymentAttributes().getId());
+        paymentUpdated.setVersion(testPayment.getVersion());
+
+        assertEquals(testPayment, paymentUpdated);
     }
 
 }
