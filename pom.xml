@@ -41,6 +41,7 @@
         <jackson.version>2.9.5</jackson.version>
         <swagger.version>2.9.0</swagger.version>
         <rest-assured.version>3.1.0</rest-assured.version>
+        <cucumber.version>3.0.2</cucumber.version>
     </properties>
 
     <dependencies>
@@ -85,6 +86,25 @@
             <version>${embedded-mongo.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-spring</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+
 
         <!--VALIDATION-->
         <dependency>

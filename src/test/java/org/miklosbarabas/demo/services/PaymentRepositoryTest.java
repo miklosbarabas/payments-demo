@@ -1,24 +1,15 @@
-package org.miklosbarabas.demo;
+package org.miklosbarabas.demo.services;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.util.Lists;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.miklosbarabas.demo.models.Payment;
 import org.miklosbarabas.demo.repositories.PaymentAttributesRepository;
 import org.miklosbarabas.demo.repositories.PaymentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -27,43 +18,18 @@ import static org.junit.Assert.*;
  *
  * @author Miklos Barabas
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {Application.class})
 @DirtiesContext
-public class PaymentRepositoryTest {
-
-    @Autowired
-    PaymentRepository paymentRepository;
-
-    @Autowired
-    PaymentAttributesRepository paymentAttributesRepository;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    private ArrayList<Payment> testPayments;
-
-    @Before
-    public void initDb() throws IOException {
-        clearDb();
-        // Load test data from JSON and save to DB
-        try (InputStream inputStream = TypeReference.class.getResourceAsStream("/testdata/payments.json")) {
-            TypeReference<List<Payment>> typeReference = new TypeReference<List<Payment>>(){};
-            testPayments = objectMapper.readValue(inputStream, typeReference);
-        }
-        paymentRepository.save(testPayments);
+public class PaymentRepositoryTest extends PaymentTestBase {
+    @BeforeClass
+    public static void init() {
+        NUMBER_OF_TESTPAYMENTS_TO_DB = 14;
     }
 
-    @After
-    public void clearDb() {
-        paymentRepository.deleteAll();
-        paymentAttributesRepository.deleteAll();
-    }
 
     @Test
     public void findAllPaymentsTest() {
         ArrayList<Payment> allPayments = Lists.newArrayList(paymentRepository.findAll());
-        assertEquals(allPayments.size(), testPayments.size());
+        assertEquals(allPayments.size(), NUMBER_OF_TESTPAYMENTS_TO_DB);
         assertEquals(allPayments, testPayments);
     }
 
