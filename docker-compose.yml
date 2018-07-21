@@ -1,6 +1,7 @@
 version: "3"
 services:
 
+  # MONGO
   mongodb:
     image: mongo
     ports:
@@ -21,18 +22,43 @@ services:
     - 8081:8081
     network_mode: bridge
 
-
-  demo_app:
+  # APP
+  demoapp:
     build:
       context: ./
       dockerfile: Dockerfile
     image: demo
     environment:
-      - SPRING_ACTIVE_PROFILES=compose
+    - SPRING_ACTIVE_PROFILES=compose
     links:
     - mongodb:mongodb
     depends_on:
     - mongodb
     ports:
     - 8080:8080
+    network_mode: bridge
+
+  # MONITORING
+  prometheus:
+    image: prom/prometheus
+    volumes:
+    - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+    - 9090:9090
+    links:
+    - demoapp:demoapp
+    network_mode: bridge
+
+  grafana:
+    image: grafana/grafana
+    volumes:
+    - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    - ./monitoring/grafana/config.ini:/etc/grafana/config.ini
+    - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    ports:
+    - 3000:3000
+    links:
+    - prometheus:prometheus
+    depends_on:
+    - prometheus
     network_mode: bridge

@@ -42,6 +42,7 @@
         <swagger.version>2.9.0</swagger.version>
         <rest-assured.version>3.1.0</rest-assured.version>
         <cucumber.version>3.0.2</cucumber.version>
+        <micrometer.version>1.0.6</micrometer.version>
     </properties>
 
     <dependencies>
@@ -203,6 +204,18 @@
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-graphite</artifactId>
+        </dependency>
+
+        <!-- MicrometerIO -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-spring-legacy</artifactId>
+            <version>${micrometer.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>${micrometer.version}</version>
         </dependency>
     </dependencies>
 
